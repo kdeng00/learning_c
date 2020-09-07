@@ -1,6 +1,0 @@
-/*
- *
- * Exercise 
- *
- * Author: Kun Deng
- */
