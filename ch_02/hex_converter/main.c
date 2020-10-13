@@ -22,6 +22,9 @@
 
 char hex_value[15];
 
+// Rudimentary and simple mathematical power function
+long rudy_pow(long value, int power);
+
 // Return values
 // 0 - Invalid
 // 1 - Converting to hex
@@ -45,9 +48,11 @@ int size_of_string(char *value);
 // 1 - Equal
 int compare_string(char *first, char *second);
 
-// Converts the hex value to a number
-int hex_conveted_to_number(char *value);
+// Converts the hex part value to a number
+int hex_converted_to_number(char *value);
 
+// Converts the hex part value to a number
+int hex_part_to_number(char hex_part);
 
 // Converts the number to a hex value
 char* number_converted_to_hex(char *value);
@@ -104,7 +109,13 @@ int main(int argc, char **argv)
             if (is_valid_source(val, NUMBER) != 1)
             {
                 printf("%s is not a valid hex number\n", val);
+
+                return -1;
             }
+
+            int converted_to_number = hex_converted_to_number(val);
+
+            printf("%s coverted to a number is %d\n", val, converted_to_number);
             break;
         case INVALID:
             printf("%s is an invalid conversion target\n", conversion_target);
@@ -117,6 +128,26 @@ int main(int argc, char **argv)
     return 0;
 }
 
+
+long rudy_pow(long value, int power)
+{
+    if (power > 2)
+    {
+        return value * rudy_pow(value, --power);
+    }
+    else if (power == 2)
+    {
+        return value * value;
+    }
+    else if (power == 1)
+    {
+        return value;
+    }
+    else
+    {
+        return 1;
+    }
+}
 
 
 int is_valid_conversion_target(char *target)
@@ -211,11 +242,63 @@ int compare_string(char *first, char *second)
     return result;
 }
 
-int hex_conveted_to_number(char *value)
+int hex_converted_to_number(char *value)
 {
     int number = 0;
+    int power = 0;
+    int string_size = size_of_string(value);
+
+    // printf("String size of %s is %d\n", value, string_size);
+
+    for (int i = (string_size - 1); i >= 0; --i)
+    {
+        char hex_part = value[i];
+        int number_part = hex_part_to_number(hex_part);
+        int powered = rudy_pow(16, power);
+        // printf("16 to the %d power is %d\n", power, powered);
+        number += number_part * rudy_pow(16, power);
+
+        printf("hex part %c equals %d\n", hex_part, number_part);
+        ++power;
+    }
 
     return number;
+}
+
+int hex_part_to_number(char hex_part)
+{
+    int result = 0;
+
+    if (hex_part == 'f' || hex_part == 'F')
+    {
+        result = 15;
+    }
+    else if (hex_part == 'e' || hex_part == 'E')
+    {
+        result = 14;
+    }
+    else if (hex_part == 'd' || hex_part == 'D')
+    {
+        result = 13;
+    }
+    else if (hex_part == 'c' || hex_part == 'C')
+    {
+        result = 12;
+    }
+    else if (hex_part == 'b' || hex_part == 'B')
+    {
+        result = 11;
+    }
+    else if (hex_part == 'a' || hex_part == 'A')
+    {
+        result = 10;
+    }
+    else
+    {
+        result = hex_part - '0';
+    }
+
+    return result;
 }
 
 
@@ -260,19 +343,6 @@ char *number_converted_to_hex(char *value)
     {
         reverse_order(hex_value);
     }
-
-    /**
-    for (int i = (string_size - 1); i >= 0; --i)
-    {
-        int number_part = value[i] - '0';
-
-        printf("Number part %d\n", number_part);
-
-
-        ++hex_start;
-    }
-    */
-
 
     return hex_value;
 }
