@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 
             int converted_to_number = hex_converted_to_number(val);
 
-            printf("%s coverted to a number is %d\n", val, converted_to_number);
+            printf("%s converted to a number is %d\n", val, converted_to_number);
             break;
         case INVALID:
             printf("%s is an invalid conversion target\n", conversion_target);
