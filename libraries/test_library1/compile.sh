@@ -1,0 +1,16 @@
+if [ ! -d "bin" ]; then
+    mkdir bin
+    echo "created bin directory"
+fi
+
+if [ ! -d "bin/static" ]; then
+    mkdir bin/static
+    echo "created bin/static directory"
+fi
+
+gcc -c src/test.c -Iinclude -o bin/static/test.o
+
+# gcc -fPIC src/test.c -Iinclude -o bin/shared/test.o
+
+ar rcs bin/static/libtestlibrary.a bin/static/test.o
+
