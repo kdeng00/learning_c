@@ -4,45 +4,37 @@
 #include <ctype.h>
 
 
-char *HexOctalConv_number_converted_to_hex(char *value)
+int HexOctalConv_hex_converted_to_number(char *value)
 {
-    int number_value = atoi(value);
-    int string_size = HexOctalConv_size_of_string(value);
+    int number = 0;
+    int power = 0;
+    int string_size = size_of_string(value);
 
-    extern char hex_value[];
-
-    int hex_start = 0;
-
-    for (double number = number_value;;)
+    for (int i = (string_size - 1); i >= 0; --i)
     {
-        const double quotient = number / 16.0;
-        const int quotient_trunecated = number / 16;
-        const double remaining = quotient - quotient_trunecated;
-        int number_hex_part = remaining * 16;
+        char hex_part = value[i];
+        int number_part = HexOctalConv_hex_part_to_number(hex_part);
+        number += number_part * rudy_pow(16, power);
 
-        char hex_part = HexOctalConv_convert_hex_part(number_hex_part);
-        hex_value[hex_start++] = hex_part;
-
-        /**
-        if (number >= 16)
-        {
-        }
-        else
-        {
-        }
-        */
-
-        number = quotient_trunecated;
+        ++power;
     }
 
-    hex_value[hex_start] = '\0';
+    return number;
+}
 
-    if (hex_start > 1)
+int HexOctalConv_octal_converted_to_number(char *value)
+{
+    int octal_converted_to_number = 0;
+    int power_value = 0;
+
+    for (int a = size_of_string(value) - 1; a >= 0; --a)
     {
-        HexOctalConv_reverse_order(hex_value);
+        int octal_part = value[a] - '0';
+        int octal_power = octal_part * rudy_pow(8, power_value++);
+        octal_converted_to_number += octal_power;
     }
 
-    return hex_value;
+    return octal_converted_to_number;
 }
 
 int HexOctalConv_hex_part_to_number(char hex_part)
@@ -76,36 +68,6 @@ int HexOctalConv_hex_part_to_number(char hex_part)
     }
 
     return result;
-}
-
-long HexOctalConv_rudy_pow(long value, int power)
-{
-    if (power > 2)
-    {
-        return value * HexOctalConv_rudy_pow(value, --power);
-    }
-    else if (power == 2)
-    {
-        return value * value;
-    }
-    else if (power == 1)
-    {
-        return value;
-    }
-    else
-    {
-        return 1;
-    }
-}
-
-
-int HexOctalConv_size_of_string(char *value)
-{
-    int size = 0;
-
-    for (; value[size] != '\0'; ++size);
-
-    return size;
 }
 
 
@@ -142,9 +104,115 @@ char HexOctalConv_convert_hex_part(int value)
 }
 
 
-void HexOctalConv_reverse_order(char *value)
+
+void HexOctalConv_number_converted_to_hex(char *hex_value, char *value)
 {
-    int string_size = HexOctalConv_size_of_string(value);
+    printf("Starting process to convert %s to hexidecimal\n", value);
+    int number_value = atoi(value);
+    int string_size = size_of_string(value);
+
+    int hex_start = 0;
+
+    for (double number = number_value;;)
+    {
+        const double quotient = number / 16.0;
+        const int quotient_trunecated = number / 16;
+        const double remaining = quotient - quotient_trunecated;
+        int number_hex_part = remaining * 16;
+
+        char hex_part = HexOctalConv_convert_hex_part(number_hex_part);
+        hex_value[hex_start++] = hex_part;
+        // printf("%s\n", hex_value);
+
+        if (number < 16)
+        {
+            break;
+        }
+
+        number = quotient_trunecated;
+    }
+
+    hex_value[hex_start] = '\0';
+
+    if (hex_start > 1)
+    {
+        reverse_order(hex_value);
+    }
+}
+
+void HexOctalConv_number_converted_to_octal(char *octal_value, char *value)
+{
+    int value_number = atoi(value);
+    int index = 0;
+
+    for (double quotient_number = value_number; (quotient_number >= 0);)
+    {
+        if (quotient_number == 0)
+        {
+            octal_value[index] = '0';
+            break;
+        }
+        else
+        {
+            quotient_number /= 8;
+            int trunecated_quotient_number = quotient_number;
+            double remaining = quotient_number - trunecated_quotient_number;
+            int octal_part = remaining * 8;
+
+            octal_value[index] = octal_part + '0';
+            quotient_number = trunecated_quotient_number;
+
+            ++index;
+        }
+    }
+
+    octal_value[index] = '\0';
+
+    for (int a = 0; a <= (index / 2); ++a)
+    {
+        char tmp = octal_value[a];
+        octal_value[a] = octal_value[(index - 1) - a];
+        octal_value[(index - 1)] = tmp;
+    }
+}
+
+
+
+
+static long rudy_pow(long value, int power)
+{
+    if (power > 2)
+    {
+        return value * rudy_pow(value, --power);
+    }
+    else if (power == 2)
+    {
+        return value * value;
+    }
+    else if (power == 1)
+    {
+        return value;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+
+static int size_of_string(char *value)
+{
+    int size = 0;
+
+    for (; value[size] != '\0'; ++size);
+
+    return size;
+}
+
+
+static void reverse_order(char *value)
+{
+    int string_size = size_of_string(value);
 
     for (int i = 0;; ++i)
     {
