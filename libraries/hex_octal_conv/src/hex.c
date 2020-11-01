@@ -8,12 +8,12 @@ int HexOctalConv_hex_converted_to_number(char *value)
 {
     int number = 0;
     int power = 0;
-    int string_size = size_of_string(value);
+    const int string_size = size_of_string(value);
 
     for (int i = (string_size - 1); i >= 0; --i)
     {
-        char hex_part = value[i];
-        int number_part = HexOctalConv_hex_part_to_number(hex_part);
+        const char hex_part = value[i];
+        const int number_part = HexOctalConv_hex_part_to_number(hex_part);
         number += number_part * rudy_pow(16, power);
 
         ++power;
@@ -29,8 +29,8 @@ int HexOctalConv_octal_converted_to_number(char *value)
 
     for (int a = size_of_string(value) - 1; a >= 0; --a)
     {
-        int octal_part = value[a] - '0';
-        int octal_power = octal_part * rudy_pow(8, power_value++);
+        const int octal_part = value[a] - '0';
+        const int octal_power = octal_part * rudy_pow(8, power_value++);
         octal_converted_to_number += octal_power;
     }
 
@@ -107,9 +107,9 @@ char HexOctalConv_convert_hex_part(int value)
 
 void HexOctalConv_number_converted_to_hex(char *hex_value, char *value)
 {
-    printf("Starting process to convert %s to hexidecimal\n", value);
-    int number_value = atoi(value);
-    int string_size = size_of_string(value);
+    // printf("Starting process to convert %s to hexidecimal\n", value);
+    const int number_value = atoi(value);
+    const int string_size = size_of_string(value);
 
     int hex_start = 0;
 
@@ -118,11 +118,10 @@ void HexOctalConv_number_converted_to_hex(char *hex_value, char *value)
         const double quotient = number / 16.0;
         const int quotient_trunecated = number / 16;
         const double remaining = quotient - quotient_trunecated;
-        int number_hex_part = remaining * 16;
+        const int number_hex_part = remaining * 16;
 
-        char hex_part = HexOctalConv_convert_hex_part(number_hex_part);
+        const char hex_part = HexOctalConv_convert_hex_part(number_hex_part);
         hex_value[hex_start++] = hex_part;
-        // printf("%s\n", hex_value);
 
         if (number < 16)
         {
@@ -142,7 +141,7 @@ void HexOctalConv_number_converted_to_hex(char *hex_value, char *value)
 
 void HexOctalConv_number_converted_to_octal(char *octal_value, char *value)
 {
-    int value_number = atoi(value);
+    const int value_number = atoi(value);
     int index = 0;
 
     for (double quotient_number = value_number; (quotient_number >= 0);)
@@ -155,9 +154,9 @@ void HexOctalConv_number_converted_to_octal(char *octal_value, char *value)
         else
         {
             quotient_number /= 8;
-            int trunecated_quotient_number = quotient_number;
-            double remaining = quotient_number - trunecated_quotient_number;
-            int octal_part = remaining * 8;
+            const int trunecated_quotient_number = quotient_number;
+            const double remaining = quotient_number - trunecated_quotient_number;
+            const int octal_part = remaining * 8;
 
             octal_value[index] = octal_part + '0';
             quotient_number = trunecated_quotient_number;
@@ -170,10 +169,52 @@ void HexOctalConv_number_converted_to_octal(char *octal_value, char *value)
 
     for (int a = 0; a <= (index / 2); ++a)
     {
-        char tmp = octal_value[a];
+        const char tmp = octal_value[a];
         octal_value[a] = octal_value[(index - 1) - a];
         octal_value[(index - 1)] = tmp;
     }
+}
+
+void HexOctalConv_itoa(int value, char *str, int base)
+{
+   	static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+	
+	char *wstr = str;
+	
+	int sign;
+
+    div_t res;
+
+	// Validate base
+	if (base < 2 || base > 35)
+    {
+        *wstr='\0';
+        
+        return;
+    }
+	
+	// Take care of sign
+	if ((sign = value) < 0)
+    {
+        value = -value;
+    } 
+
+	// Conversion. Number is reversed.
+	do
+    {
+        res = div(value, base);
+
+        *wstr++ = num[res.rem];
+    } while(value = res.quot);
+	
+	if (sign < 0)
+    {
+        *wstr++= '-';
+    }
+	
+	*wstr='\0';
+	
+    reverse_order(str);
 }
 
 
@@ -212,15 +253,15 @@ static int size_of_string(char *value)
 
 static void reverse_order(char *value)
 {
-    int string_size = size_of_string(value);
+    const int string_size = size_of_string(value);
 
-    for (int i = 0;; ++i)
+    for (int i = 0; i <= ((string_size - 1) / 2); ++i)
     {
-        char tmp = value[string_size - i - 1];
+        const char tmp = value[string_size - i - 1];
         value[string_size - i  - 1] = value[i];
         value[i] = tmp;
 
-        int is_odd = string_size % 2;
+        const int is_odd = string_size % 2;
 
         if (is_odd == 1 && (string_size / 2) == ((i + 1)))
         {

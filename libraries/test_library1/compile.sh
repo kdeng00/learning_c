@@ -8,8 +8,9 @@ if [ ! -d "bin/static" ]; then
     echo "created bin/static directory"
 fi
 
-gcc -c src/test.c -Iinclude -o bin/static/test.o
+gcc -c src/test.c -Iinclude -o -std=gnu99 bin/static/test.o
 
+# For shared libraries.
 # gcc -fPIC src/test.c -Iinclude -o bin/shared/test.o
 
 ar rcs bin/static/libtestlibrary.a bin/static/test.o

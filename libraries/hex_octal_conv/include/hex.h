@@ -11,6 +11,7 @@ char HexOctalConv_convert_hex_part(int value);
 
 void HexOctalConv_number_converted_to_hex(char *hex_value, char *value);
 void HexOctalConv_number_converted_to_octal(char *octal_value, char *value);
+void HexOctalConv_itoa(int value, char *str, int base);
 
 
 static long rudy_pow(long value, int power);
