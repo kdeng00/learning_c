@@ -27,9 +27,7 @@ int main()
     int x_int = 10, y_int = 25;
 
     print_pair(x_int, y_int, "Before");
-
     swap(int, x_int, y_int);
-
     print_pair(x_int, y_int, "After");
 
     float x_double = 99.99, y_double = 8.55;
