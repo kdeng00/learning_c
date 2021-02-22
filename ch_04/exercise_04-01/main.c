@@ -15,7 +15,7 @@
 
 int main()
 {
-    char s[] = "this is not the end, but it might as well be.The time is nigh. The end will befall all of us. The end.\0";
+    char s[] = "this is not the end, but it might as well be. The end will befall all of us. The end.\0";
     char t[] = "end\0";
 
     printf("Searching for string: %s\nIn: %s\n", t, s);
