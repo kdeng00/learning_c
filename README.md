@@ -21,6 +21,14 @@ it. I know C++ but C shouldn't be viewed as C++ without all of the extra stuff. 
 originally meant to be a subset of C but never did.
 
 
+### Compiling with GCC
+
+Use the following command when compiling files to keep the symbols. Useful when using GDB
+```BASH
+gcc -g main.c
+```
+
+
 ### Note
 
 This repo is not expecting any more commits. Due to life obligations I've choosen to focus on
