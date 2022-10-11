@@ -5,14 +5,20 @@ distinctions are not made during sorting; for example, a and A compare equal.
  *
  * Author: Kun Deng
  */
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#define COMPARE_NUMBERS 0
+#define COMPARE_CHARACTERS 1
+#define COMPARE_CHARACTERS_IGNORE_CASE 3
 
 #define MAXLINES 5
 char *lineptr[MAXLINES];
 
 
-void qsort(void *v[], int left, int right, int (*comp)(void *, void *));
+void qsort_simple(void *v[], int left, int right, int (*comp)(void *, void *));
 void swap(void *[], int i, int j);
 int numcmp(char *s1, char *s2);
 int strcmp_ignore(char *s1, char *s2);
@@ -21,7 +27,7 @@ int readlines(char *lptr[], int nlines);
 void writelines(char *lptr[], int nlines);
 
 
-void qsort(void *v[], int left, int right, int (*comp)(void *, void *)) {
+void qsort_simple(void *v[], int left, int right, int (*comp)(void *, void *)) {
     int i, last;
 
     if (left >= right)
@@ -35,8 +41,8 @@ void qsort(void *v[], int left, int right, int (*comp)(void *, void *)) {
     }
 
     swap(v, left, last);
-    qsort(v, left, last-1, comp);
-    qsort(v, last+1, right, comp);
+    qsort_simple(v, left, last-1, comp);
+    qsort_simple(v, last+1, right, comp);
 }
 
 void swap(void *v[], int i, int j) {
@@ -61,8 +67,32 @@ int numcmp(char *s1, char *s2) {
         return 0;
 }
 
-// TODO: Implement function
 int strcmp_ignore(char *s1, char *s2) {
+    int s1_size, s2_size;
+
+    s1_size = strlen(s1);
+    s2_size = strlen(s2);
+
+    for (int i = 0; i < s1_size; i++) {
+        int a, b;
+
+        a = s1[i];
+
+        for (int j = 0; j < s2_size; j++) {
+            b = s2[j];
+
+            if (a == b)
+                continue;
+            else if ((a > b && a-32 == b) || (a < b && b-32 == a))D {
+                continue;
+
+            if (a < b)
+                return -1;
+            else if (a > b)
+                return 1;
+        }
+    }
+
     return 0;
 }
 
@@ -97,9 +127,9 @@ void writelines(char *lptr[], int nlines)
 }
 
 int testlines(char *lineptr[]) {
-    lineptr[0] = "ffffc";
+    lineptr[0] = "aaaa";
     lineptr[1] = "zzzz";
-    lineptr[2] = "aaaa";
+    lineptr[2] = "AAAA";
     lineptr[3] = "bbsss";
     lineptr[4] = "osp";
 
@@ -110,26 +140,30 @@ int testlines(char *lineptr[]) {
 int main(int argc, char **argv)
 {
     int nlines;
-    int numeric = 0;
+    int numeric = COMPARE_NUMBERS;
 
     if (argc > 1 && strcmp(argv[1], "-n") == 0)
-        numeric = 1;
+        numeric = COMPARE_CHARACTERS;
     else if (argc > 1 && strcmp(argv[1], "-f") == 0)
-        numeric = 3;
+        numeric = COMPARE_CHARACTERS_IGNORE_CASE;
 
     if ((nlines = testlines(lineptr)) >= 0 ) {
         printf("Currently\n");
         writelines(lineptr, nlines);
 
-        if (numeric != 3) {
-            void (*my_func) = (numeric ? numcmp : strcmp);
+        if (numeric != COMPARE_CHARACTERS_IGNORE_CASE) {
+            void (*my_func) = (numeric == COMPARE_NUMBERS ? numcmp : strcmp);
 
-            qsort((void **) lineptr, 0, nlines-1, 
+            qsort_simple((void **) lineptr, 0, nlines-1, 
+                (int (*)(void *, void *))my_func);
+        } else if (numeric == COMPARE_CHARACTERS_IGNORE_CASE) {
+            void (*my_func) = strcmp_ignore;
+
+            qsort_simple((void **) lineptr, 0, nlines-1, 
                 (int (*)(void *, void *))my_func);
         } else {
             void (*my_func) = strcmp_ignore;
-            qsort((void **) lineptr, 0, nlines-1, my_func);
-                
+            qsort_simple((void **) lineptr, 0, nlines-1, my_func);
         }
 
         printf("\nAfter\n");
