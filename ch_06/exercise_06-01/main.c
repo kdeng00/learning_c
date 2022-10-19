@@ -12,8 +12,8 @@
 #include <string.h>
 #include <stddef.h>
 
-#define BUFFSIZE 100
-#define MAXWORD 100
+#define BUFFSIZE 5
+#define MAXWORD 5
 
 #define NKEYS (sizeof keytab / sizeof(struct key))
 
@@ -52,11 +52,12 @@ void ungetch(int c);
 
 
 int getword(char *word, int lim) {
-    int c, getch(void);
-    void ungetch(int);
+    int c;
+    /* int c, getch(void); */
+    /* void ungetch(int); */
     char *w = word;
 
-    while (isspace(c = getch()));
+    while (isspace(c = getch()) || c != EOF);
 
     if (c != EOF)
         *w++ = c;
@@ -99,7 +100,6 @@ int getch(void) {
 }
 
 
-/* push character back on input */
 void ungetch(int c) {
     if (bufp >= BUFFSIZE)
         printf("ungetch: too many characters\n");
@@ -116,10 +116,10 @@ int main()
 
     while (getword(word, MAXWORD) != EOF)
         if (isalpha(word[0]))
-            if ((p = binsearch(word, keytab, NKEYS)) >= 0)
+            if ((p = binsearch(word, keytab, NKEYS)) != NULL)
                 p->count++;
 
-    for (p = 0; p < keytab + NKEYS; p++)
+    for (p = keytab; p < keytab + NKEYS; p++)
         if (p->count > 0)
             printf("%4d %s\n", p->count, p->word);
 
